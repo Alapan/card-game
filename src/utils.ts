@@ -1,5 +1,4 @@
 import { CardImage } from './types';
-import { v6 as uuidv6 } from 'uuid';
 
 export const shuffleCards = (cardImages: CardImage[]) => {
   const allCards = [ ...cardImages, ...cardImages ];
@@ -16,6 +15,5 @@ export const shuffleCards = (cardImages: CardImage[]) => {
     return updatedCard;
 
   })
-  //cardsWithUniqueKeys.map(((card, i) => console.log('Card ' + i, card.id)))
   return cardsWithUniqueKeys;
 };
