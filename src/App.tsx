@@ -1,35 +1,89 @@
+import { useCallback, useEffect, useState } from 'react';
 import Card from './components/Card';
-import { CardImage } from './types';
+import { CardImage, initialCardImages } from './types';
+import { shuffleCards } from './utils';
 import styles from './App.module.css';
 
 function App() {
-  const cardImages: CardImage[] = [
-    { src: '/img/bag-1.png', matched: false },
-    { src: '/img/bank-1.png', matched: false },
-    { src: '/img/horse-1.png', matched: false },
-    { src: '/img/money-1.png', matched: false },
-    { src: '/img/piggy-1.png', matched: false },
-    { src: '/img/pound-1.png', matched: false },
-  ];
+  const [ numberOfMoves, setNumberOfMoves ] = useState(0);
+  const [ pickOne, setPickOne ] = useState<CardImage | null>(null);
+  const [ pickTwo, setPickTwo ] = useState<CardImage | null>(null);
+  const [ cards, setCards ] = useState<CardImage[]>([]);
 
-  const shuffledCards = () => {
-    const allCards = [ ...cardImages, ...cardImages ];
-    let currentIndex = 11;
-    while (currentIndex != -1) {
-      const randomIndex = Math.floor(Math.random() * currentIndex);
-      [allCards[randomIndex], allCards[currentIndex]] = [allCards[currentIndex], allCards[randomIndex]];
-      currentIndex--;
-    }
-    return allCards;
+  useEffect(() => {
+    setCards(shuffleCards(initialCardImages));
+  }, []);
+
+  const updatePick = useCallback((card: CardImage) => {
+    pickOne ? setPickTwo(card) : setPickOne(card);
+  }, [ pickOne ]);
+
+  const flipCardOver = () => {
+    setCards((prevCards) => {
+      const currentCard = pickTwo ?? pickOne;
+      if (!currentCard) return prevCards;
+
+      const newCards = prevCards.map((card) => {
+        if (card.id === currentCard.id) {
+          return {
+            ...currentCard,
+            isFaceDown: false
+          }
+        }
+        return card;
+      })
+      return newCards;
+    });
   };
+
+  const flipCardsBack = () => {
+    setTimeout(() => {
+      setCards((prevCards) => {
+        const newCards = prevCards.map((card) => {
+          if (card.id === pickOne?.id) {
+            return {
+              ...card,
+              isFaceDown: true
+            }
+          } else if (card.id === pickTwo?.id){
+            return {
+              ...card,
+              isFaceDown: true
+            }
+          }
+          return card;
+        });
+        return newCards;
+      });
+    }, 500);
+  };
+
+  useEffect(() => {
+    if (pickOne || pickTwo) {
+      flipCardOver();
+    }
+
+    if (pickOne && pickTwo) {
+      setNumberOfMoves((prev) => prev+1);
+      if (pickOne.src !== pickTwo.src) {
+        flipCardsBack();
+      }
+      setPickOne(null);
+      setPickTwo(null);
+    }
+  }, [ pickOne, pickTwo ]);
 
   return (
     <>
-      <h2 className={styles.mainHeading}>Lloyd's memory game</h2>
+      <h2 className={styles.mainHeading}>My memory game</h2>
+      <h4 className={styles.subHeading}>Number of moves: {numberOfMoves}</h4>
       <div className={styles.cardGrid}>
-        {shuffledCards().map((card: CardImage, i) => (
-          <div className={styles.cardInner} key={`card.src-${i}`}>
-            <Card {...card}/>
+        {cards.map((card: CardImage) => (
+          <div className={styles.cardInner} key={card.id}>
+            <Card
+              card={card}
+              updatePick={() => updatePick(card)}
+            />
           </div>
         ))}
       </div>

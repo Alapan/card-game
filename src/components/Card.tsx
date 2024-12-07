@@ -1,22 +1,27 @@
-import { MouseEventHandler, useState } from 'react';
+import { MouseEventHandler } from 'react';
+import { CardImage } from '../types';
 import styles from './styles/Card.module.css';
 
 interface CardProps  {
-  src: string;
+  card: CardImage;
+  updatePick: () => void;
 }
 
-const Card = ({ src }: CardProps) => {
-  const [ isFlipped, setIsFlipped ] = useState(false);
+const Card = ({
+  card,
+  updatePick,
+}: CardProps) => {
 
-  const handleClick: MouseEventHandler<HTMLDivElement> = () => {
-    setIsFlipped(!isFlipped);
-  };
+  const { src, isFaceDown } = card;
 
   let cardCls = styles.card;
-
-  if (isFlipped) {
+  if (!isFaceDown) {
     cardCls += ` ${styles.flipped}`;
   }
+
+  const handleClick: MouseEventHandler<HTMLDivElement> = () => {
+    updatePick();
+  };
 
   return (
     <div className={cardCls} onClick={handleClick}>
