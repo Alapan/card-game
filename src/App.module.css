@@ -1,14 +1,30 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.mainHeading {
   text-align: center;
 }
 
-.card {
-  padding: 2em;
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  gap: 1rem;
+  margin-block: 2rem;
+  margin-inline: 10rem;
 }
 
-.read-the-docs {
-  color: #888;
+.cardInner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-block: 2rem;
+}
+
+@media (min-width: 768px) {
+  .cardGrid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 100px);
+  }
+
+  .cardInner {
+    margin-block: 1rem;
+  }
 }
