@@ -1,11 +1,11 @@
 import { MouseEventHandler, useState } from 'react';
 import styles from './styles/Card.module.css';
 
-interface CardProps {
-  image: string; 
+interface CardProps  {
+  src: string;
 }
 
-const Card = ({ image }: CardProps) => {
+const Card = ({ src }: CardProps) => {
   const [ isFlipped, setIsFlipped ] = useState(false);
 
   const handleClick: MouseEventHandler<HTMLDivElement> = () => {
@@ -21,10 +21,18 @@ const Card = ({ image }: CardProps) => {
   return (
     <div className={cardCls} onClick={handleClick}>
       <div className={styles.back}>
-        <img src='/img/cover.png'/>
+        <img
+          src='/img/cover.png'
+          height={100}
+          width={100}
+        />
       </div>
       <div className={styles.front}>
-        <img src={`/img/${image}`} />
+        <img
+          src={src}
+          height={100}
+          width={100}
+        />
       </div>
     </div>
   );
